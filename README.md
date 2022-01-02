@@ -1,1 +1,1 @@
-# AIrtificial Intelligence For Creative Technologies
+# Artificial Intelligence For Creative Technologies
