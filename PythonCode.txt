@@ -1,0 +1,47 @@
+# Clone cycleGAN and pix2pix implementation
+!git clone https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix
+
+# Change root directory to 'pytorch-CycleGAN-and-pix2pix/' from cloned repo
+import os
+os.chdir('/content/pytorch-CycleGAN-and-pix2pix/')
+
+# Install dependencies
+!pip install -r requirements.txt
+
+# Mount google drive
+from google.colab import drive
+drive.mount('/content/drive')
+
+# Move training dataset folder to /content/pytorch-CycleGAN-and-pix2pix/datasets
+!mv '/content/drive/MyDrive/AdamsJacksonTestData.zip' '/content/pytorch-CycleGAN-and-pix2pix/datasets'
+
+# Unzip training dataset folder
+%cd 'datasets'
+!unzip "AdamsJacksonTestData.zip" > /dev/null
+%cd '..'
+
+# Combine domain A and domain B images together with combine_A_and_B.py script provided in implementation repo
+!python 'datasets/combine_A_and_B.py' --fold_A 'datasets/AdamsJacksonTestData/A' --fold_B 'datasets/AdamsJacksonTestData/B' --fold_AB 'datasets/AdamsJacksonTestData'
+
+# Import matplotlib.pyplot
+import matplotlib.pyplot as plt
+
+# Visualise one of the combined images
+img = plt.imread('datasets/AdamsJacksonTestData/train/00.jpg')
+plt.imshow(img)
+
+# Train pix2pix on the training dataset to translate from domain B (black and white) to domain A (color)
+!python train.py --dataroot datasets/AdamsJacksonTestData --name AdamsJackson --model pix2pix --n_epochs 100 --n_epochs_decay 100 --direction BtoA
+
+# Test the model on test dataset
+!ls checkpoints/
+!python test.py --dataroot datasets/AdamsJacksonTestData --model pix2pix --name AdamsJackson
+
+# Visualise test results
+# Fake
+img = plt.imread('./results/AdamsJackson/test_latest/images/05.1_fake_B.png')
+plt.imshow(img)
+
+# Real
+img = plt.imread('./results/AdamsJackson/test_latest/images/05.1_real_A.png')
+plt.imshow(img)
