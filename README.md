@@ -9,5 +9,5 @@ The report pdf is also available in AIReport.pdf.
 
 ### Project dependencies
 Python 3.6  
-PyTorch 1.4
+PyTorch 1.4  
 GPU
